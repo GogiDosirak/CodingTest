@@ -9,7 +9,6 @@ public class Main {
         StringBuilder sb = new StringBuilder();
         int N = Integer.parseInt(br.readLine());
         int[][] arr = new int[N][2];
-        int[] rankArr = new int[N];
         int ha = 0;
 
 
@@ -18,23 +17,22 @@ public class Main {
             arr[i][0] = Integer.parseInt(st.nextToken());
             arr[i][1] = Integer.parseInt(st.nextToken());
         }
-        
-        
+
+
         for (int i = 0; i < N; i++) {
+            int rank = 1;
             for (int j = 0; j < N; j++) {
-                if(arr[i][0] < arr[j][0] && arr[i][1] < arr[j][1]) { // 아예 몸무게 + 키가 작은 경우
-                    rankArr[i]++; // 마지막에 1 더해줘야함
+                if(arr[i][0] < arr[j][0] && arr[i][1] < arr[j][1]) {// 아예 몸무게 + 키가 작은 경우
+                    rank++; // 마지막에 1 더해줘야함
                 }
             }
+            sb.append(rank).append(" ");
 
         }
-        for (int i = 0; i < N; i++) {
-            sb.append(rankArr[i]+1).append(" ");
-        }
-
         System.out.println(sb);
 
 
 
     }
 }
+
