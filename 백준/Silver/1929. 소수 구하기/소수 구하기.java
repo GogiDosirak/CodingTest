@@ -27,11 +27,13 @@ public class Main {
 
     public static void getPrime(int N, boolean[] prime) {
         prime[0] = prime[1] = true; // 0과 1은 소수가 아니므로 true;
-        for (int i = 2; i <= Math.sqrt(prime.length); i++) { // N+1이나 prime.length 해주는 이유 -> 500까지라면  arr[501]까지 해야됨
+        // N+1이나 prime.length 해주는 이유 -> 500까지라면  arr[501]까지 해야됨
+        for (int i = 2; i <= Math.sqrt(prime.length); i++) { 
             if(prime[i]) {
                 continue; // prime[i]가 true이면 소수가 아니므로 그냥 지나면됨!
-            } // 소수인 경우, 3인 경우 3
-            for (int j = i * i; j <= N; j+=i) { // i * i 부터 시작하는 이유는 i가 5라면 i * 2, i * 3 같이 i보다 작은 경우는 앞에서 처리되기 때문
+            } // 소수인 경우, 
+            for (int j = i * i; j <= N; j+=i) {
+                // i * i 부터 시작하는 이유는 i가 5라면 i * 2, i * 3 같이 i보다 작은 경우는 앞에서 처리되기 때문
                 // 해당 배수를 소수 목록에서 지워야하므로
                 prime[j] = true;
             }
@@ -40,3 +42,9 @@ public class Main {
 
     }
 }
+
+
+
+
+
+
