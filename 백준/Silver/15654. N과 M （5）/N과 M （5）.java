@@ -6,7 +6,7 @@ import java.util.*;
 public class Main {
     static int N,M;
     static int[] pm, arr, ch;
-    public void solve(int L, int index) {
+    public void solve(int L) {
         if(L == M) {
             for (int x : pm) {
                 System.out.print(x + " ");
@@ -17,7 +17,7 @@ public class Main {
                 if(ch[i] == 0) {
                     ch[i] = 1;
                     pm[L] = arr[i];
-                    solve(L + 1, index);
+                    solve(L + 1);
                     ch[i] = 0;
                 }
             }
@@ -40,7 +40,7 @@ public class Main {
             arr[i] = Integer.parseInt(st.nextToken());
         }
         Arrays.sort(arr);
-        T.solve(0,0);
+        T.solve(0);
 
 
     }
