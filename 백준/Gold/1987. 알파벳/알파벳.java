@@ -6,19 +6,19 @@ import java.util.*;
 public class Main {
     static int R,C;
     static char[][] arr;
-    static ArrayList<Character> ch;
+    static boolean[] ch;
     int[] dx = {1,0,-1,0};
     int[] dy = {0,1,0,-1};
-    static int answer, cnt;
+    static int answer;
     public void DFS(int x, int y, int cnt) {
         answer = Math.max(answer,cnt);
         for (int i = 0; i < 4; i++) {
             int nx = x + dx[i];
             int ny = y + dy[i];
-            if(nx >= 0 && nx < R && ny >= 0 && ny < C && !ch.contains(arr[nx][ny])) {
-                ch.add(arr[nx][ny]);
+            if(nx >= 0 && nx < R && ny >= 0 && ny < C && ch[arr[nx][ny] - 'A'] == false) {
+                ch[arr[nx][ny] - 'A'] = true;
                 DFS(nx,ny, cnt+1);
-                ch.remove(ch.size()-1); // 제일 뒤의 얘를 지워주면 됨
+                ch[arr[nx][ny] - 'A'] = false; 
             }
         }
     }
@@ -37,12 +37,11 @@ public class Main {
             }
         }
         answer = 0;
-        ch = new ArrayList<>();
-        ch.add(arr[0][0]);
+
+        ch = new boolean[26]; // contains는 시간복잡도가 매우 길다. -> boolean 배열로 char - 'A'해주는 식으로 하는게 더 좋음.
+        ch[arr[0][0] - 'A'] = true;
         T.DFS(0,0,1);
         System.out.println(answer);
-
-
 
     }
 }
