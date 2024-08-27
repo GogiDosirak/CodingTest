@@ -10,12 +10,11 @@ public class Main {
     static int[] arr;
     static Integer[] dp;
     public int dynamic(int N) {
-        if(dp[N] == null) {
-            dp[N] = Math.max(dynamic(N-2), dynamic(N-3) + arr[N-1]) + arr[N]; // 시도 가능한 경우의 수 중 가장 최선을 선택 // 재귀를 통한 탑다운 방식
+        if(dp[N] != null) {
+            return dp[N];
         }
+        dp[N] = Math.max(dynamic(N-2), dynamic(N-3) + arr[N-1]) + arr[N]; // 시도 가능한 경우의 수 중 가장 최선을 선택 // 재귀를 통한 탑다운 방식
         return dp[N];
-
-
     }
  public static void main(String[] args) throws IOException {
         Main T = new Main();
