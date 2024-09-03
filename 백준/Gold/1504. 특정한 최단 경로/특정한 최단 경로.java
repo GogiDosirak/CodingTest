@@ -21,7 +21,7 @@ public class Main {
     static int N, E, v1, v2;
     static ArrayList<ArrayList<Edge>> arr;
     static int[] dis;
-    static int INF = 999999999;
+    static int INF = 200000000;
     public void solution(int v) {
         Arrays.fill(dis, INF); // dis 초기화
         PriorityQueue<Edge> pQ = new PriorityQueue<>();
@@ -80,7 +80,7 @@ public class Main {
         int e = dis[v1];
         int answer1 = a+b+c;
         int answer2 = d+f+e;
-        if (a >= INF || b >= INF || c >= INF || d >= INF || e >= INF || f >= INF) {
+        if(answer1 >= INF && answer2 >= INF) {
             System.out.println(-1);
         } else {
             System.out.println(Math.min(answer1, answer2));
