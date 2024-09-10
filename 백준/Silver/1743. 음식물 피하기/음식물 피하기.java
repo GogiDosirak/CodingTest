@@ -38,7 +38,8 @@ public class Main {
         for (int i = 1; i <= N; i++) {
             for (int j = 1; j <= M; j++) {
                 if(arr[i][j] == 1) {
-                    size = 0;
+                    size = 1;
+                    arr[i][j] = 0;
                     T.DFS(i,j);
                     answer = Math.max(answer, size);
                 }
