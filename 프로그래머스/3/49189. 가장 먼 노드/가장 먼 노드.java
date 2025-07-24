@@ -24,11 +24,11 @@ class Solution {
         while(!queue.isEmpty()) {
             int current = queue.poll();
             int size = graph.get(current).size();
-            for(int i = 0; i < size; i++) {
-                if(visited[graph.get(current).get(i)] == false) {
-                    queue.add(graph.get(current).get(i));
-                    visited[graph.get(current).get(i)] = true;
-                    distance[graph.get(current).get(i)] = distance[current] + 1;
+            for(int next : graph.get(current)) {
+                if(visited[next] == false) {
+                    visited[next] = true;
+                    queue.add(next);
+                    distance[next] = distance[current] + 1;
                 }
             }
         }
