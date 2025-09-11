@@ -16,17 +16,16 @@ class Solution {
             q2.add(n);
         }
         
-        
-        // 가능한 모든 경우의 수 탐색 + 최소 횟수 - BFS로 풀고 싶지만, 원소의 길이가 300,000 이므로 거의 불가능 O(N+E)
-        // => 투포인터로 각 큐에서 빼고 더해주면 되지 않을까?
+        // 가능한 모든 경우의 수 탐색 + 최소 횟수 - BFS로 풀고 싶지만, 2^300000의 시간복잡도
+        // => 투포인터로 각 큐에서 빼고 더해주면 되지 않을까? -> O(N)으로 풀 수 있음
         // 홀수라면 불가능
         long totalSum = sum1 + sum2;
         if(totalSum%2 == 1) return -1;
         
-        // queue의 최대길이는 300000 - 넘어선다면 불가능하다고 판단
+        // queue의 최대길이는 300000 - 다 비우고 채워서도 안된다면 불가능하다고 판단
         int count = 0;
         
-        while(count <= 300000) {
+        while(count <= 600000) {
             if(sum1 == sum2) return count;
             if(sum1 > sum2) {
                 int now = q1.poll();
@@ -41,10 +40,6 @@ class Solution {
             }
             count++;
         }
-        
-        
-        
         return -1;
-        
     }
 }
