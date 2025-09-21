@@ -6,93 +6,111 @@ public class Main {
     static boolean visited[][][][];
     static int N, M;
 
-    static class State {
-        int rx, ry, bx, by;
-        State(int rx, int ry, int bx, int by) { this.rx = rx; this.ry = ry; this.bx = bx; this.by = by; }
-    }
-
-    static class Move {
-        int x, y, dist;
-        boolean inHole;
-        Move(int x, int y, int dist, boolean inHole) { this.x = x; this.y = y; this.dist = dist; this.inHole = inHole; }
-    }
-
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
 
-        grid = new char[N][M];
         visited = new boolean[N][M][N][M];
+        grid = new char[N][M];
+        int redX = 0, redY = 0, blueX = 0, blueY = 0;
 
-        int rx = 0, ry = 0, bx = 0, by = 0;
         for (int i = 0; i < N; i++) {
             String s = br.readLine();
             for (int j = 0; j < M; j++) {
                 grid[i][j] = s.charAt(j);
-                if (grid[i][j] == 'R') { rx = i; ry = j; }
-                else if (grid[i][j] == 'B') { bx = i; by = j; }
+                if (grid[i][j] == 'R') {
+                    redX = i; redY = j;
+                    grid[i][j] = '.'; // R 자리는 빈 칸으로
+                } else if (grid[i][j] == 'B') {
+                    blueX = i; blueY = j;
+                    grid[i][j] = '.'; // B 자리는 빈 칸으로
+                }
             }
         }
 
-        // 보드는 고정 상태로 두고, R/B는 상태에서만 관리
-        grid[rx][ry] = '.';
-        grid[bx][by] = '.';
-
-        System.out.println(bfs(rx, ry, bx, by));
+        Main T = new Main();
+        System.out.println(T.BFS(redX, redY, blueX, blueY));
     }
 
-    // 구슬 하나를 (dx,dy) 방향으로 끝까지 굴림: 최종 좌표, 이동 칸 수, 구멍 여부 반환
-    static Move move(int x, int y, int dx, int dy) {
-        int d = 0;
-        while (true) {
-            char next = grid[x + dx][y + dy];
-            if (next == '#') break;
-            x += dx; y += dy; d++;
-            if (grid[x][y] == 'O') return new Move(x, y, d, true);
-        }
-        return new Move(x, y, d, false);
-    }
+    public int BFS(int redX, int redY, int blueX, int blueY) {
+        Queue<State> queue = new LinkedList<>();
+        visited[redX][redY][blueX][blueY] = true;
+        queue.add(new State(redX, redY, blueX, blueY));
+        int count = 0;
 
-    static int bfs(int rx, int ry, int bx, int by) {
-        Queue<State> q = new LinkedList<>();
-        visited[rx][ry][bx][by] = true;
-        q.add(new State(rx, ry, bx, by));
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            for (int i = 0; i < size; i++) {
+                State now = queue.poll();
 
-        int[] dx = {-1, 1, 0, 0}; // 상, 하, 좌, 우
-        int[] dy = { 0, 0,-1, 1};
+                // 4방향 기울이기
+                for (int d = 0; d < 4; d++) {
+                    State state = move(now, d);
 
-        int depth = 0; // 지금까지 기울인 횟수
-        while (!q.isEmpty()) {
-            int size = q.size();
-            for (int s = 0; s < size; s++) {
-                State cur = q.poll();
+                    if (grid[state.blueX][state.blueY] == 'O') continue; // 파란 구슬 들어가면 실패
+                    if (grid[state.redX][state.redY] == 'O') return 1; // 빨간 구슬 성공
 
-                for (int dir = 0; dir < 4; dir++) {
-                    Move r = move(cur.rx, cur.ry, dx[dir], dy[dir]);
-                    Move b = move(cur.bx, cur.by, dx[dir], dy[dir]);
-
-                    // 파랑이 구멍 → 실패 경로(버림)
-                    if (b.inHole) continue;
-                    // 빨강만 구멍 → 성공
-                    if (r.inHole) return 1;
-
-                    // 겹치면 이동거리(dist) 큰 쪽(뒤따라온 구슬)을 한 칸 되돌리기
-                    if (r.x == b.x && r.y == b.y) {
-                        if (r.dist > b.dist) { r.x -= dx[dir]; r.y -= dy[dir]; }
-                        else                 { b.x -= dx[dir]; b.y -= dy[dir]; }
-                    }
-
-                    if (!visited[r.x][r.y][b.x][b.y]) {
-                        visited[r.x][r.y][b.x][b.y] = true;
-                        q.add(new State(r.x, r.y, b.x, b.y));
+                    if (!visited[state.redX][state.redY][state.blueX][state.blueY]) {
+                        visited[state.redX][state.redY][state.blueX][state.blueY] = true;
+                        queue.add(state);
                     }
                 }
             }
-            depth++;
-            if (depth >= 10) return 0; // 10번 이내 못 빼냈다면 실패
+            count++;
+            if (count >= 10) return 0; // 10번 초과는 실패
         }
         return 0;
+    }
+
+    // d = 0: up, 1: down, 2: left, 3: right
+    public State move(State s, int d) {
+        int[] dx = {-1, 1, 0, 0};
+        int[] dy = {0, 0, -1, 1};
+
+        int redX = s.redX, redY = s.redY;
+        int blueX = s.blueX, blueY = s.blueY;
+
+        // 먼저 빨간 구슬 이동
+        int rMove = 0;
+        while (grid[redX + dx[d]][redY + dy[d]] != '#' && grid[redX][redY] != 'O') {
+            redX += dx[d];
+            redY += dy[d];
+            rMove++;
+            if (grid[redX][redY] == 'O') break;
+        }
+
+        // 파란 구슬 이동
+        int bMove = 0;
+        while (grid[blueX + dx[d]][blueY + dy[d]] != '#' && grid[blueX][blueY] != 'O') {
+            blueX += dx[d];
+            blueY += dy[d];
+            bMove++;
+            if (grid[blueX][blueY] == 'O') break;
+        }
+
+        // 같은 위치에 멈추면 이동거리 비교해서 하나 뒤로 물리기
+        if (redX == blueX && redY == blueY && grid[redX][redY] != 'O') {
+            if (rMove > bMove) { // 빨간 구슬이 더 멀리 왔다면 한 칸 뒤로
+                redX -= dx[d];
+                redY -= dy[d];
+            } else {
+                blueX -= dx[d];
+                blueY -= dy[d];
+            }
+        }
+
+        return new State(redX, redY, blueX, blueY);
+    }
+}
+
+class State {
+    int redX, redY, blueX, blueY;
+    public State(int redX, int redY, int blueX, int blueY) {
+        this.redX = redX;
+        this.redY = redY;
+        this.blueX = blueX;
+        this.blueY = blueY;
     }
 }
